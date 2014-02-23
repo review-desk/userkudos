@@ -26,7 +26,7 @@
 						user.email_verification,
 						UserUtil.USER_DB_EMAIL_VERIFICATION_VERIFIED))
 			throw new Exception(
-					"Your email has been successfully verified. You can now <a href=\"login\"><u>login</u></a>.");
+					"Your email has been already verified. You can now <a href=\"login\"><u>login</u></a>.");
 
 		user.email_verification = UserUtil.USER_DB_EMAIL_VERIFICATION_VERIFIED;
 		user.save();
@@ -53,7 +53,6 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-++
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <!-- end: META -->
 <!-- start: MAIN CSS -->

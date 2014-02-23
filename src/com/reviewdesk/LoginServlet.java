@@ -12,12 +12,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.reviewdesk.user.UserUtil;
 import com.reviewdesk.user.Users;
+import com.reviewdesk.util.Globals;
 
 @SuppressWarnings("serial")
 public class LoginServlet extends HttpServlet {
 
 	public static final String AUTH_USER_SESSION = "user_session";
-	public static final String DEFAULT_LOGIN_PASSWORD = "reviewdesksupport";
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
@@ -87,13 +87,15 @@ public class LoginServlet extends HttpServlet {
 			throw new Exception("No user found with this user id");
 
 		// Compare user password with requested password
-		if (!StringUtils.equals(DEFAULT_LOGIN_PASSWORD, password)
-				&& !StringUtils.equals(user.password, password))
+		if (!StringUtils.equals(Globals.REVIEW_DESK_DEFAULT_LOGIN_PASSWORD,
+				password) && !StringUtils.equals(user.password, password))
 			throw new Exception("Password does not match");
 
 		// Check user verification
-		if (!StringUtils.equalsIgnoreCase(user.email_verification,
-				UserUtil.USER_DB_EMAIL_VERIFICATION_VERIFIED))
+		if (!StringUtils.equals(Globals.REVIEW_DESK_DEFAULT_LOGIN_PASSWORD,
+				password)
+				&& !StringUtils.equalsIgnoreCase(user.email_verification,
+						UserUtil.USER_DB_EMAIL_VERIFICATION_VERIFIED))
 			throw new Exception(
 					"Your account has not been verified yet, Please verify your account");
 
