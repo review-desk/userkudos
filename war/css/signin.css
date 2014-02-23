@@ -1,0 +1,46 @@
+.openid-buttons {
+	padding: 15px 0 10px;
+	border-top: 1px dotted #CCC;
+	border-bottom: 1px dotted #CCC;
+	border-right: none;
+	border-left: none;
+	margin-bottom: 15px;
+}
+
+.btn-fb {
+	border: 0 none;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 1.428571429;
+	border-radius: 5px;
+	color: #fff !important;
+	background-color: #3a5897;
+	border-color: #3a5897;
+	-webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .15);
+	box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .15);
+}
+
+.btn-fb:hover {
+	color: #fff;
+	background-color: #2f477a;
+	border-color: #293e6b;
+}
+
+.btn-twt {
+	border: 0 none;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 1.428571429;
+	border-radius: 5px;
+	color: #fff !important;
+	background-color: #29a9e0;
+	border-color: #29a9e0;
+	-webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .15);
+	box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .15);
+}
+
+.btn-twt:hover {
+	color: #fff;
+	background-color: #1c92c4;
+	border-color: #1a84b2;
+}
