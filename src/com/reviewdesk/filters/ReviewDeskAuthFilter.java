@@ -11,7 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.reviewdesk.LoginServlet;
+import com.reviewdesk.SessionManager;
 import com.reviewdesk.UserSession;
 
 public class ReviewDeskAuthFilter implements Filter {
@@ -27,6 +27,9 @@ public class ReviewDeskAuthFilter implements Filter {
 			FilterChain chain) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 
+		// Reset the thread local
+		SessionManager.set((UserSession) null);
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -39,15 +42,18 @@ public class ReviewDeskAuthFilter implements Filter {
 
 		System.out.println("Session Manager cookie = "
 				+ httpRequest.getSession().getAttribute(
-						LoginServlet.AUTH_USER_SESSION));
+						SessionManager.AUTH_USER_SESSION));
 
 		UserSession userSession = (UserSession) httpRequest.getSession()
-				.getAttribute(LoginServlet.AUTH_USER_SESSION);
-		
+				.getAttribute(SessionManager.AUTH_USER_SESSION);
+
 		if (userSession == null) {
 			httpResponse.sendRedirect("/login");
 			return;
 		}
+
+		// Add this in session manager
+		SessionManager.set((HttpServletRequest) request);
 
 		chain.doFilter(httpRequest, httpResponse);
 		return;

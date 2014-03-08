@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-	$("#signup_with_facebook").live("click", function() {
+	$("#signup_with_facebook").on("click", function() {
 
 		open_new_window("/facebook.jsp?type=facebook_oauth", "facebook");
 
@@ -8,7 +8,7 @@ $(document).ready(function() {
 
 	});
 
-	$("#signup_with_twitter").live("click", function() {
+	$("#signup_with_twitter").on("click", function() {
 
 		open_new_window("/twitter.jsp?type=twitter_oauth", "twitter");
 

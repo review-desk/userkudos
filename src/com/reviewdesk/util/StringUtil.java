@@ -2,7 +2,19 @@ package com.reviewdesk.util;
 
 import java.util.Random;
 
+import org.apache.commons.lang.StringUtils;
+
 public class StringUtil {
+	
+	public static void checkParameters(String[] args) throws Exception
+    {
+
+	for (int i = 0; i < args.length; i++)
+	{
+	    if (StringUtils.isBlank(args[i]))
+		throw new Exception("Field  contains null values...");
+	}
+    }
 
 	public static String parseText(String text) {
 

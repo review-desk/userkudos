@@ -16,8 +16,6 @@ import com.reviewdesk.user.Users;
 @SuppressWarnings("serial")
 public class RegisterServlet extends HttpServlet {
 
-	public static final String AUTH_USER_SESSION = "user_session";
-
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
 		doGet(req, resp);
@@ -27,7 +25,7 @@ public class RegisterServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		try {
-			request.getSession().removeAttribute(AUTH_USER_SESSION);
+			request.getSession().removeAttribute(SessionManager.AUTH_USER_SESSION);
 
 			// Get command
 			String command = request.getParameter("command");
@@ -52,9 +50,9 @@ public class RegisterServlet extends HttpServlet {
 
 			// Create session
 			UserSession userSession = new UserSession("reviewdesk.com",
-					user.user_id, user.user_name);
+					user.user_id, user.user_name, user.id);
 
-			request.getSession().setAttribute(AUTH_USER_SESSION, userSession);
+			request.getSession().setAttribute(SessionManager.AUTH_USER_SESSION, userSession);
 
 			// To set session active for 15 days if "keep me signin"
 			request.getSession().setMaxInactiveInterval(15 * 24 * 60 * 60);

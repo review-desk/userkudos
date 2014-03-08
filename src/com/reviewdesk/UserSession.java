@@ -14,17 +14,19 @@ public class UserSession implements Serializable {
 	private String claimID;
 	private String email;
 	private String name;
+	private Long id;
 
 	public UserSession() {
 	}
 
-	public UserSession(String claimID, String email, String name) {
+	public UserSession(String claimID, String email, String name, Long id) {
 
 		this.claimID = (String) URLUtil.escapeToJavascript(claimID);
 		this.email = (String) URLUtil.escapeToJavascript(StringUtils
 				.lowerCase(email));
 		this.name = (String) URLUtil.escapeToJavascript(StringUtils
 				.lowerCase(name));
+		this.id = (Long) id;
 
 	}
 
@@ -38,5 +40,8 @@ public class UserSession implements Serializable {
 
 	public String getName() {
 		return this.name;
+	}
+	public Long getId() {
+		return this.id;
 	}
 }

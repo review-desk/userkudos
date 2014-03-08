@@ -2,6 +2,8 @@ package com.reviewdesk.social;
 
 import javax.persistence.Id;
 
+import com.googlecode.objectify.annotation.NotSaved;
+import com.googlecode.objectify.condition.IfDefault;
 import com.reviewdesk.db.ObjectifyGenericDao;
 
 public class SocialPrefs {
@@ -10,11 +12,20 @@ public class SocialPrefs {
 	public Long id;
 
 	public Long user_id;
+	
 	public Boolean facebook;
-	public String facebook_user_details;
-	public String facebook_page_datails;
+	
+	@NotSaved(IfDefault.class)
+	public String facebook_user_details = null;
+	
+	@NotSaved(IfDefault.class)
+	public String facebook_page_datails = null;
+	
+	
 	public Boolean twitter;
-	public String twitter_user_details;
+	
+	@NotSaved(IfDefault.class)
+	public String twitter_user_details = null;
 
 	// Dao
 	public static ObjectifyGenericDao<SocialPrefs> dao = new ObjectifyGenericDao<SocialPrefs>(

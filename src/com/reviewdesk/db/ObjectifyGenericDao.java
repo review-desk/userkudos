@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Query;
 import com.googlecode.objectify.util.DAOBase;
+import com.reviewdesk.reviews.Reviews;
 import com.reviewdesk.social.SocialPrefs;
 import com.reviewdesk.user.Users;
 
@@ -19,8 +23,8 @@ public class ObjectifyGenericDao<T> extends DAOBase {
 	static {
 
 		ObjectifyService.register(Users.class);
-	    ObjectifyService.register(SocialPrefs.class);
-		// ObjectifyService.register(UIPrefs.class);
+		ObjectifyService.register(SocialPrefs.class);
+		ObjectifyService.register(Reviews.class);
 
 	}
 
@@ -330,6 +334,99 @@ public class ObjectifyGenericDao<T> extends DAOBase {
 			keys.add(key);
 		}
 		return keys;
+	}
+
+	/**
+	 * List keys by property with order specified
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public List<T> listByPropertyAndLimit(Map<String, Object> map, Integer limit) {
+		Query<T> q = ofy().query(clazz);
+		for (String propName : map.keySet()) {
+			q.filter(propName, map.get(propName));
+		}
+		if (limit != null)
+			q.limit(limit);
+
+		return asList(q.fetch());
+
+	}
+
+	public List<T> fetchAllByOrder(int max, String cursor,
+			Map<String, Object> map, boolean forceLoad, boolean cache,
+			String orderBy) {
+		Query<T> query = ofy().query(clazz);
+		if (map != null)
+			for (String propName : map.keySet()) {
+				query.filter(propName, map.get(propName));
+			}
+
+		if (!StringUtils.isEmpty(orderBy))
+			query.order(orderBy);
+
+		return fetchAllWithCursor(max, cursor, query, forceLoad, cache);
+	}
+
+	public List<T> fetchAllWithCursor(int max, String cursorStr,
+			Query<T> query, boolean forceLoad, boolean cache) {
+		if (cursorStr != null)
+			query.startCursor(Cursor.fromWebSafeString(cursorStr));
+
+		int index = 0;
+		String newCursor = null;
+		List<T> results = new ArrayList<T>();
+
+		QueryResultIterator<T> iterator = query.iterator();
+		while (iterator.hasNext()) {
+			T result = iterator.next();
+
+			// Add to list
+			results.add(result);
+
+			// Send totalCount if first time
+			if (Cursor == null && index == 0) {
+				// First time query - let's get the count
+				if (result instanceof com.agilecrm.cursor.Cursor) {
+
+					com.agilecrm.cursor.Cursor agileCursor = (com.agilecrm.cursor.Cursor) result;
+					Object object = forceLoad ? null : CacheUtil
+							.getCache(this.clazz.getSimpleName() + "_"
+									+ NamespaceManager.get() + "_count");
+
+					if (object != null)
+						agileCursor.count = (Integer) object;
+					else {
+						long startTime = System.currentTimeMillis();
+						agileCursor.count = query.count();
+						long endTime = System.currentTimeMillis();
+						if ((endTime - startTime) > 3 * 1000 && cache)
+							CacheUtil.setCache(this.clazz.getSimpleName() + "_"
+									+ NamespaceManager.get() + "_count",
+									agileCursor.count, 2 * 60 * 60 * 1000);
+					}
+
+				}
+			}
+
+			// Check if we have reached the limit
+			if (++index == max) {
+				// Sets cursor for client
+				if (iterator.hasNext()) {
+					Cursor cursorDb = iterator.getCursor();
+					newCursor = cursorDb.toWebSafeString();
+
+					// Store the cursor in the last element
+					if (result instanceof com.agilecrm.cursor.Cursor) {
+						com.agilecrm.cursor.Cursor agileCursor = (com.agilecrm.cursor.Cursor) result;
+						agileCursor.cursor = newCursor;
+					}
+				}
+				break;
+			}
+		}
+		return results;
 	}
 
 }
